@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cubicly</title>
+<style>
+/* Estilos previamente proporcionados */
+.mapa {
+width: 800px;
+height: 600px;
+border: 1px solid #000;
+position: relative;
+overflow: hidden;
+}
+
+.cubo {
+width: 50px;
+height: 50px;
+background-color: #0000FF;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+}
+
+.controles {
+margin-top: 20px;
+}
+
+button {
+width: 100px;
+height: 50px;
+font-size: 18px;
+margin: 10px;
+}
+
+.punto {
+width: 30px;
+height: 30px;
+background-color: #00FF00;
+position: absolute;
+}
+
+/* Nuevos estilos para el menú y botones */
+header {
+background-color: #333;
+color: #fff;
+padding: 10px;
+text-align: center;
+}
+
+nav ul {
+list-style-type: none;
+margin: 0;
+padding: 0;
+}
+
+nav ul li {
+display: inline;
+margin-right: 10px;
+}
+
+nav a {
+color: #fff;
+text-decoration: none;
+padding: 5px 10px;
+border: 1px solid #fff;
+border-radius: 5px;
+}
+
+nav a:hover {
+background-color: #555;
+}
+
+footer {
+background-color: #333;
+color: #fff;
+text-align: center;
+padding: 10px;
+}
+</style>
+</head>
+<body>
+<header>
+<h1>Cubicly</h1>
+<nav>
+<ul>
+<li><a href="index.html">Inicio</a></li>
+<!-- Agrega más opciones al menú según tu juego -->
+</ul>
+</nav>
+</header>
+
+<div class="mapa">
+<div class="cubo" id="cubo"></div>
+<div class="punto" id="punto"></div>
+</div>
+<div class="controles">
+<button id="arriba">Arriba</button>
+<button id="abajo">Abajo</button>
+<button id="izquierda">Izquierda</button>
+<button id="derecha">Derecha</button>
+</div>
+
+<script>
+const cubo = document.getElementById('cubo');
+const mapa = document.querySelector('.mapa');
+const arriba = document.getElementById('arriba');
+const abajo = document.getElementById('abajo');
+const izquierda = document.getElementById('izquierda');
+const derecha = document.getElementById('derecha');
+const punto = document.getElementById('punto');
+
+let x = mapa.offsetWidth / 2;
+let y = mapa.offsetHeight / 2;
+let velocidad = 20; // Aumentamos la velocidad de movimiento
+let puntos = 0;
+
+cubo.style.top = `${y}px`;
+cubo.style.left = `${x}px`;
+
+// Función para generar posición aleatoria de los puntos
+function generarPosicionAleatoria() {
+let maxX = mapa.offsetWidth - 30; // 30 es el ancho del punto
+let maxY = mapa.offsetHeight - 30; // 30 es el alto del punto
+let randomX = Math.floor(Math.random() * maxX);
+let randomY = Math.floor(Math.random() * maxY);
+return { x: randomX, y: randomY };
+}
+
+// Aparecer el punto en una posición aleatoria
+function aparecerPunto() {
+let posicion = generarPosicionAleatoria();
+punto.style.top = `${posicion.y}px`;
+punto.style.left = `${posicion.x}px`;
+punto.style.display = 'block';
+}
+
+aparecerPunto(); // Inicialmente aparece el primer punto
+
+arriba.addEventListener('click', () => {
+console.log('Player successfully used ["W" Strafe]');
+if (y - velocidad > 0) {
+y -= velocidad;
+cubo.style.top = `${y}px`;
+checkCollision();
+}
+});
+
+abajo.addEventListener('click', () => {
+console.log('Player successfully used ["S" Strafe]');
+if (y + velocidad < mapa.offsetHeight - 50) {
+y += velocidad;
+cubo.style.top = `${y}px`;
+checkCollision();
+}
+});
+
+izquierda.addEventListener('click', () => {
+console.log('Player successfully used ["A" Strafe]');
+if (x - velocidad > 0) {
+x -= velocidad;
+cubo.style.left = `${x}px`;
+checkCollision();
+}
+});
+
+derecha.addEventListener('click', () => {
+console.log('Player successfully used ["D" Strafe]');
+if (x + velocidad < mapa.offsetWidth - 50) {
+x += velocidad;
+cubo.style.left = `${x}px`;
+checkCollision();
+}
+});
+
+// Función para comprobar colisión con el punto y aumentar los puntos
+function checkCollision() {
+let cuboRect = cubo.getBoundingClientRect();
+let puntoRect = punto.getBoundingClientRect();
+
+if (
+cuboRect.left < puntoRect.right &&
+cuboRect.right > puntoRect.left &&
+cuboRect.top < puntoRect.bottom &&
+cuboRect.bottom > puntoRect.top
+) {
+puntos++;
+document.getElementById('score').innerText = 'Puntos: ' + puntos;
+punto.style.display = 'none';
+aparecerPunto();
+console.log('Player ate a point!');
+}
+}
+</script>
+<div id="score">Puntos: 0</div>
+
+<footer>
+<p>&copy; 2022 Cubicly. Todos los derechos reservados.</p>
+</footer>
+</body>
+</html>
